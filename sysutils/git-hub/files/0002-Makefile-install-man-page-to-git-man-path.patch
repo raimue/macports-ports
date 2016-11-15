@@ -1,0 +1,34 @@
+From 0321d3e00510e47073ae338e38175034d06e5309 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Rainer=20M=C3=BCller?= <raimue@macports.org>
+Date: Tue, 8 Nov 2016 18:38:42 +0100
+Subject: [PATCH 2/3] Makefile: install man page to $(git --man-path)
+
+For consistency, install man page to the same path that git uses.
+---
+ Makefile | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 2564c07..7e88f6e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -16,15 +16,13 @@ EXTS = $(shell find $(EXT) -type f) \
+ 	$(shell find $(EXT) -type l)
+ SHARE = share
+ 
+-# XXX Make these vars look like git.git/Makefile style
+-PREFIX ?= /usr/local
+ # XXX Using sed for now. Would like to use bash or make syntax.
+ # If GIT_EXEC_PATH is set, `git --exec-path` will contain that appended to the
+ # front. We just want the path where git is actually installed:
+ INSTALL_LIB ?= $(shell git --exec-path | sed 's/.*://')
+ INSTALL_CMD ?= $(INSTALL_LIB)/$(NAME)
+ INSTALL_EXT ?= $(INSTALL_LIB)/$(NAME).d
+-INSTALL_MAN1 ?= $(PREFIX)/share/man/man1
++INSTALL_MAN1 ?= $(shell git --man-path | sed 's/.*://')/man1
+ 
+ ##
+ # User targets:
+-- 
+2.10.1
+

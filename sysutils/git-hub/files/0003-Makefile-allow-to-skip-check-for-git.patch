@@ -1,0 +1,27 @@
+From 78106e7c20fb4fd451a155b3e7f7bc28e4a9292d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Rainer=20M=C3=BCller?= <raimue@macports.org>
+Date: Tue, 8 Nov 2016 18:46:52 +0100
+Subject: [PATCH 3/3] Makefile: allow to skip check for git
+
+---
+ Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 7e88f6e..c6d4cd1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,8 +1,10 @@
+ # Make sure we have 'git' and it works OK:
++ifeq ($(NO_GIT_CHECK),)
+ ifeq ($(shell which git),)
+     $(error 'git' is not installed on this system)
+ endif
+ GITVER ?= $(word 3,$(shell git --version))
++endif
+ 
+ NAME = git-hub
+ LIB = lib
+-- 
+2.10.1
+

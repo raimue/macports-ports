@@ -1,0 +1,37 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        ingydotnet git-hub 0.1.5
+platforms           darwin
+maintainers         raimue \
+                    openmaintainer
+license             MIT
+
+description         The Git command for GitHub
+long_description    git-hub or git hub subcommand, allows you to perform many of \
+                    the operations of the GitHub v3 REST API from command line.
+
+checksums           rmd160  ea6c9c6c7ae677e8af98e7ead0854d9241c20e2a \
+                    sha256  3bb4db34a406774b57a187ac478afd2f902561901f7f2e982eb4bb2e9f9029fa
+
+depends_lib         port:git
+
+patchfiles          0001-Makefile-support-DESTDIR-variable-for-install.patch \
+                    0002-Makefile-install-man-page-to-git-man-path.patch \
+                    0003-Makefile-allow-to-skip-check-for-git.patch \
+                    0004-Follow-symlinks-when-looking-for-lib-files.patch
+patch.pre_args      -p1
+
+use_configure no
+build {}
+destroot.args       NO_GIT_CHECK=1 \
+                    INSTALL_LIB=${prefix}/libexec/git-hub \
+                    INSTALL_MAN=${prefix}/share/man
+
+post-destroot {
+    xinstall -d ${destroot}${prefix}/libexec/git-core
+    ln -s ${prefix}/libexec/git-hub/git-hub ${destroot}${prefix}/libexec/git-core/git-hub
+    ln -s ${prefix}/libexec/git-hub/git-hub ${destroot}${prefix}/bin/git-hub
+}

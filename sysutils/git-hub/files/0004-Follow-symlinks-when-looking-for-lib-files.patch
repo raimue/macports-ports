@@ -1,0 +1,35 @@
+From 3cd379cf57e7689bf46a6f7fbcf18647dd7cc1fd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Rainer=20M=C3=BCller?= <raimue@macports.org>
+Date: Thu, 10 Nov 2016 18:54:32 +0100
+Subject: [PATCH] Follow symlinks when looking for lib files
+
+The previous logic would not handle the case when the executed 'git-hub'
+script itself was a symlink.
+---
+ lib/git-hub | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/lib/git-hub b/lib/git-hub
+index 9e7d5ca..e710cb5 100755
+--- a/lib/git-hub
++++ b/lib/git-hub
+@@ -62,7 +62,15 @@ x           Debug - Turn on Bash trace (set -x) output
+ "
+ 
+ # source bash+ :std
+-SELFDIR="$(cd -P `dirname $BASH_SOURCE` && pwd -P)"
++SELFFILE="$BASH_SOURCE"
++while [ -h "$SELFFILE" ]; do
++  SELFDIR=$(cd -P "$(dirname "$SELFFILE")" && pwd -P)
++  SELFFILE=$(readlink "$SELFFILE")
++  if [ "${SELFFILE:0:1}" != "/" ]; then
++    SELFFILE="$SELFDIR/$SELFFILE"
++  fi
++done
++SELFDIR=$(cd -P $(dirname "$SELFFILE") && pwd -P)
+ source "$SELFDIR/git-hub.d/bash+.bash"
+ bash+:import :std can
+ 
+-- 
+2.10.2
+
